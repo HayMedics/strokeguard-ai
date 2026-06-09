@@ -58,6 +58,8 @@ div[data-testid="stVerticalBlockBorderWrapper"]{background:var(--paper);border:1
 label[data-testid="stWidgetLabel"] p{font-weight:600!important;color:var(--ink)!important;font-size:.88rem!important;}
 .stButton>button{background:linear-gradient(180deg,#243a8f,#1B2A6B);color:#fff;font-weight:700;border:none;border-radius:12px;padding:.7rem 1.4rem;width:100%;box-shadow:0 8px 20px rgba(27,42,107,.28);transition:transform .12s ease;}
 .stButton>button:hover{transform:translateY(-1px);}
+.stButton>button,.stButton>button *{color:#ffffff!important;}
+.stDownloadButton>button,.stDownloadButton>button *{color:#1B2A6B!important;}
 .stDownloadButton>button{background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:12px;font-weight:700;width:100%;}
 .stTabs [data-baseweb="tab-list"]{gap:4px;border-bottom:1px solid var(--line);}
 .stTabs [data-baseweb="tab"]{font-weight:600;color:var(--muted);padding:10px 14px;}
@@ -230,8 +232,8 @@ with st.spinner("Preparing the model (first load only)…"):
 if "history" not in st.session_state: st.session_state.history=[]
 if "last" not in st.session_state: st.session_state.last=None
 
-t1,t2,t3,t4,t5,t6 = st.tabs(["🩺 Risk Assessment","🎛️ What-If Simulator","📊 Population",
-                             "📁 Batch Screening","🕘 History","🧪 Model Validation"])
+t1,t2,t3,t4,t5,t6,t7 = st.tabs(["🩺 Risk Assessment","🎛️ What-If Simulator","📊 Population",
+                             "📁 Batch Screening","🕘 History","🧪 Model Validation","ℹ️ About"])
 
 # ---------------- TAB 1: assessment ----------------
 with t1:
@@ -375,6 +377,48 @@ with t6:
     fig.tight_layout(); st.pyplot(fig,use_container_width=True); plt.close("all")
     st.caption("Internal vs external AUC are close, suggesting the model is stable on resampled data. "
                "True external validation needs data from another hospital/population.")
+
+# ---------------- TAB 7: about ----------------
+with t7:
+    st.markdown('<div class="hm-cardtitle">About this Project</div>',unsafe_allow_html=True)
+    k=st.columns(3)
+    k[0].metric("Patients in dataset","5,110")
+    k[1].metric("Stroke prevalence",f"{DF['stroke'].mean()*100:.1f}%")
+    k[2].metric("Model AUC",f"{VAL['internal_auc']:.2f}")
+    with st.container(border=True):
+        st.markdown("""
+#### What is StrokeGuard AI?
+StrokeGuard AI is an educational tool that estimates a patient's stroke risk from
+routine clinical inputs — age, blood pressure history, glucose, BMI, smoking status
+and more. It is built by **HayMedics Academy** to demonstrate responsible, transparent
+machine learning in healthcare.
+
+#### How it works
+- **Data:** the public Kaggle Stroke Prediction Dataset (5,110 patients). Only about
+  **5% had a stroke**, so the data is severely imbalanced — a key challenge handled
+  carefully here.
+- **Model:** a *calibrated logistic regression* inside a leak-free pipeline (imputation,
+  scaling and encoding all learn from training data only). Class-weighting compensates
+  for the imbalance so rare stroke cases aren't ignored.
+- **Decision threshold:** deliberately set using a *cost-based* rule where a **missed
+  stroke is weighted 10× a false alarm** — because in screening, catching true cases
+  matters most.
+- **Reporting:** follows the spirit of the **TRIPOD-AI** standard for clinical
+  prediction models (transparent methods, honest validation, clear limitations).
+
+#### What it can do
+SHAP-style factor contributions · Monte-Carlo confidence intervals · What-If simulation ·
+population comparison · batch CSV screening · session history · model validation ·
+branded PDF reports.
+
+#### Important limitations
+- This is an **educational screening estimate — not a diagnosis and not a medical device.**
+- It lacks strong real-world predictors (imaging, atrial fibrillation, medication history),
+  so accuracy has a natural ceiling.
+- Trained on a single dataset with no ethnicity data, so it should not be relied on for
+  real clinical decisions. Final judgement always rests with the treating clinician.
+""")
+    st.caption("Built by HayMedics Academy · Data | Research | Innovation")
 
 st.markdown("""
 <div class="hm-foot"><b>HayMedics Academy</b> &nbsp;·&nbsp; Data <span class="g">|</span> Research <span class="g">|</span> Innovation<br/>
