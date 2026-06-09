@@ -232,8 +232,8 @@ with st.spinner("Preparing the model (first load only)…"):
 if "history" not in st.session_state: st.session_state.history=[]
 if "last" not in st.session_state: st.session_state.last=None
 
-t1,t2,t3,t4,t5,t6,t7 = st.tabs(["🩺 Risk Assessment","🎛️ What-If Simulator","📊 Population",
-                             "📁 Batch Screening","🕘 History","🧪 Model Validation","ℹ️ About"])
+t7,t1,t2,t3,t4,t5,t6 = st.tabs(["ℹ️ About","🩺 Risk Assessment","🎛️ What-If Simulator","📊 Population",
+                             "📁 Batch Screening","🕘 History","🧪 Model Validation"])
 
 # ---------------- TAB 1: assessment ----------------
 with t1:
